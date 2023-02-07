@@ -1,0 +1,51 @@
+-- Example 1
+-- Find the names of students who attend some course of the second class:
+πName(πSID((σClass=2 Courses) ⨝ Gradebook) ⨝ Students)
+
+-- Example 2
+-- Find the SIDs of students who attend all courses of the first or all courses of the third class:
+((πSID, CID Gradebook) ÷ (πCID σClass=1 Courses)) ∪
+((πSID, CID Gradebook) ÷ (πCID σClass=3 Courses))
+
+
+-- Task 1
+-- a) Find the SIDs of students who attend some course of the first or second class:
+πSID((σ(Class=1 ∨ Class=2) Courses) ⨝ Gradebook)
+
+-- b) Find the SIDs of students who attend some course of the first class or have surname Valdez:
+(πSID(σSurname='Valdez' Students)) ∪ (πSID((σClass=1 Courses) ⨝ Gradebook))
+
+-- c) Find the SIDs of students who attend some course of the first and second class:
+πSID(πCID(σClass=1 Courses) ⨝ Gradebook) ∩ πSID(πCID(σClass=2 Courses) ⨝ Gradebook)
+
+-- d) Find the SIDs of students who attend all courses:
+(πSID,CID Gradebook) ÷ (πCID Courses)
+
+-- e) Find the SIDs of students who attend all courses of the third class:
+(πSID,CID Gradebook) ÷ (πCID (σClass=3 Courses))
+
+-- f) Find pairs of SIDs such that student with the first SID has better grade for some course than the student with the second SID:
+πA.SID,B.SID(ρA(Gradebook) ⨝ (A.SID ≠ B.SID ∧ A.Mark < B.Mark) ρB(Gradebook))
+
+-- g) Find the CIDs of courses attended by at least two different students:
+ρGradebook(πA.CID(ρA(Gradebook) ⨝ (A.SID ≠ B.SID ∧ A.CID = B.CID) ρB(Gradebook)))
+
+
+-- Task 2
+-- a) pi Name (pi SID ((sigma Class=1 Courses) join (sigma (Mark='A' or Mark='2') Gradebook)) join Students)
++---------------+
+| Students.Name |
++---------------+
+| 'Warren'      |
++---------------+
+
+-- b) (pi Name (pi SID ((sigma Class=1 Courses) join (sigma (Mark='A' or Mark='2') Gradebook)) join Students)) ∩ (pi Name (pi SID ((sigma Class=2 Courses) join (sigma (Mark='A' or Mark='2') Gradebook)) join Students))
++---------------+
+| Students.Name |
++---------------+
+| 'Warren'      |
++---------------+
+
+-- c) None
+
+-- d) None
