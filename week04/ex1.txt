@@ -1,0 +1,81 @@
+CREATE TABLE University ( 
+  name varchar(64) NOT NULL, 
+  location varchar(128) NOT NULL, 
+   
+  PRIMARY KEY (name) 
+); 
+ 
+CREATE TABLE Student ( 
+  id int unsigned NOT NULL, 
+  name varchar(64) NOT NULL, 
+  native_lang varchar(2) NOT NULL, 
+   
+  university_name varchar(64) NOT NULL, 
+   
+  PRIMARY KEY (id), 
+  FOREIGN KEY (university_name) REFERENCES University(name) 
+); 
+ 
+CREATE TABLE Course ( 
+  name varchar(32) NOT NULL, 
+  credits int NOT NULL, 
+   
+  university_name varchar(64) NOT NULL, 
+   
+  PRIMARY KEY (name), 
+  FOREIGN KEY (university_name) REFERENCES University(name) 
+); 
+ 
+CREATE TABLE Enrolment ( 
+  student_id int unsigned NOT NULL, 
+  course_name varchar(32) NOT NULL, 
+   
+  FOREIGN KEY (student_id) REFERENCES Student(id), 
+  FOREIGN KEY (course_name) REFERENCES Course(name) 
+); 
+ 
+INSERT INTO University VALUES 
+("Innopolis University", "Russia"),
+("Technische Universität München", "Germany"),
+("University of Innsbruck", "Austria"),
+("National Research University Higher School of Economics", "Russia");
+
+INSERT INTO Student VALUES
+(0, "Leola Gibson",     "ru", "Innopolis University"),
+(1, "Skyla Neville",    "ru", "Innopolis University"),
+(2, "Serena Ginger",    "en", "University of Innsbruck"),
+(3, "Traudl Westley",   "en", "University of Innsbruck"),
+(4, "Robert Bissette",  "en", "Technische Universität München"),
+(5, "Debi Rake",        "ru", "Technische Universität München"),
+(6, "Doubravka Kendal", "de", "Technische Universität München"),
+(7, "Sydnie Clark",     "de", "National Research University Higher School of Economics"),
+(8, "Dreda Boothman",   "en", "National Research University Higher School of Economics"),
+(9, "Justy Summers",    "en", "National Research University Higher School of Economics");
+
+INSERT INTO Course VALUES
+("Data Stuctures and Algorithms",           5, "Innopolis University"),
+("Networks",                                4, "Innopolis University"),
+("Databases",                               4, "University of Innsbruck"),
+("Sport Electives",                         3, "University of Innsbruck"),
+("Statistical Techniques for Data Science", 6, "Technische Universität München"),
+("Nature Inspired Computing",               6, "Technische Universität München"),
+("Introduction to Machine Learning",        5, "National Research University Higher School of Economics"),
+("Introduction to Economics",               3, "National Research University Higher School of Economics");
+
+INSERT INTO Enrolment VALUES
+("Leola Gibson",     "Data Stuctures and Algorithms"),
+("Leola Gibson",     "Networks"),
+("Skyla Neville",    "Data Stuctures and Algorithms"),
+("Skyla Neville",    "Networks"),
+("Serena Ginger",    "Databases"),
+("Serena Ginger",    "Sport Electives"),
+("Traudl Westley",   "Databases"),
+("Robert Bissette",  "Statistical Techniques for Data Science"),
+("Robert Bissette",  "Nature Inspired Computing"),
+("Debi Rake",        "Statistical Techniques for Data Science"),
+("Doubravka Kendal", "Statistical Techniques for Data Science"),
+("Doubravka Kendal", "Nature Inspired Computing"),
+("Sydnie Clark",     "Introduction to Economics"),
+("Dreda Boothman",   "Introduction to Economics"),
+("Justy Summers",    "Introduction to Economics"),
+("Justy Summers",    "Introduction to Machine Learning");
