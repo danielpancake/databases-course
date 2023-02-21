@@ -1,14 +1,30 @@
 -- 1. Find the universities who are located in Russia
-SELECT name FROM University WHERE location='Russia';
+SELECT NAME
+FROM   university
+WHERE  location = 'Russia';
 
 -- 2. Find the countries of universities who are not located in Russia but teaches Russian natives
-SELECT location FROM University INNER JOIN Student ON University.name = Student.university_name WHERE location<>'Russia' AND native_lang='ru';
+SELECT location
+FROM   university
+       INNER JOIN student
+               ON university.NAME = student.university_name
+WHERE  location <> 'Russia'
+       AND native_lang = 'ru';
 
 -- 3. Find student ids who studies in Innopolis University
-SELECT id FROM Student WHERE university_name='Innopolis University';
+SELECT id
+FROM   student
+WHERE  university_name = 'Innopolis University';
 
 -- 4. Find pair of course names and universities names if course credit is more than 5
-SELECT name,university_name FROM Course WHERE credits>5;
+SELECT NAME,
+       university_name
+FROM   course
+WHERE  credits > 5;
 
 -- 5. Find the universities who teaches English native speakers
-SELECT DISTINCT University.name FROM University INNER JOIN Student ON University.name = Student.university_name WHERE native_lang='en';
+SELECT DISTINCT university.NAME
+FROM   university
+       INNER JOIN student
+               ON university.NAME = student.university_name
+WHERE  native_lang = 'en';

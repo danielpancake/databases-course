@@ -1,0 +1,52 @@
+-- 1) Find the names of courses in Computer science department which have 3 credits.
+SELECT title
+FROM   course
+WHERE  dept_name = 'Comp. Sci.'
+       AND credits = 3;
+
+-- 2) For the student with ID 12345 (or any other value), show all course_id and title of all courses registered for by the student.
+SELECT c.course_id, 
+       c.title 
+FROM   takes t 
+       INNER JOIN course c 
+               ON c.course_id = t.course_id 
+WHERE  t.id = '00128';
+
+-- 3) Show the total number of credits for such courses (taken by that student).
+---   Don't display the tot_creds value from the student table, you should use SQL aggregation on courses taken by the student.
+SELECT Sum(c.credits) 
+FROM   takes t 
+       INNER JOIN course c 
+               ON c.course_id = t.course_id 
+WHERE  t.id = '00128';
+
+-- 4) Display the total credits for each of the students, along with the ID of the student.
+SELECT t.id, 
+       Sum(c.credits) 
+FROM   takes t 
+       INNER JOIN course c 
+               ON c.course_id = t.course_id 
+GROUP  BY t.id 
+ORDER  BY t.id;
+
+-- 5) Find the names of all students who have taken any Comp. Sci. course ever.
+SELECT DISTINCT s.name
+FROM   student s
+       INNER JOIN takes t
+               ON t.id = s.id
+WHERE  course_id LIKE 'CS%';
+
+-- 6) Display the IDs of all instructors who have never taught a course.
+SELECT i.id
+FROM   instructor i
+       LEFT JOIN teaches t
+              ON i.id = t.id
+WHERE  t.id IS NULL;
+
+-- 7) Display the names of the instructors also, not just the IDs.
+SELECT i.id,
+       i.name
+FROM   instructor i
+       LEFT JOIN teaches t
+              ON i.id = t.id
+WHERE  t.id IS NULL;

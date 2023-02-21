@@ -1,0 +1,87 @@
+-- === OPTIONAL ===
+-- 1) The university rules allow an F grade to be overridden by any pass grade (A, B, C, D).
+--    Now, create a view that lists information about all fail grades that have not been overridden
+--    (the view should contain all attributes from the takes relation).
+DROP VIEW IF EXISTS view_failed;
+
+CREATE VIEW view_failed
+AS
+  SELECT *
+  FROM   (SELECT id,
+                 course_id
+          FROM   (SELECT id,
+                         course_id,
+                         Min(grade)
+                  FROM   takes
+                  GROUP  BY id,
+                            course_id) _
+          WHERE  min LIKE 'F%'
+                  OR min IS NULL) _
+         INNER JOIN takes USING(id, course_id);
+
+-- 2) Find all students who have 2 or more non-overridden F grades as per the takes relation,
+--    and list them along with the F grades.
+SELECT *
+FROM   (SELECT id
+        FROM   (SELECT id,
+                       Count(*)
+                FROM   view_failed
+                GROUP  BY id) _
+        WHERE  count >= 2) _
+       INNER JOIN view_failed using(id);
+
+-- 3) Grades are mapped to a grade point as follows: A:10, B:8, C:6, D:4 and F:0.
+--    Create a table to store these mappings, and write a query to find the CPI of each student, using this table.
+--    Make sure students who have not got a non-null grade in any course are displayed with a CPI of null.
+DROP TABLE IF EXISTS grade_mapping;
+
+CREATE TABLE grade_mapping
+  (
+     letter      VARCHAR(2) NOT NULL PRIMARY KEY,
+     point_value INT        NOT NULL
+  );
+
+INSERT INTO grade_mapping
+VALUES      ('A', 10),
+            ('B', 8),
+            ('C', 6),
+            ('D', 4),
+            ('F', 0);
+
+SELECT id,
+       ( CASE
+           WHEN null_values = 0 THEN raw_cpi
+           ELSE NULL
+         end ) AS CPI
+FROM   (SELECT id,
+               Sum(point_value) raw_CPI,
+               Sum(CASE
+                     WHEN grade IS NULL THEN 1
+                     ELSE 0
+                   end)         null_values
+        FROM   takes
+               LEFT JOIN grade_mapping g
+                      ON takes.grade LIKE Concat(g.letter, '%')
+        GROUP  BY id
+        ORDER  BY id) _;
+
+-- 4) Find all rooms that have been assigned to more than one section at the same time.
+--    Display the rooms along with the assigned sections.
+WITH shared_room
+     AS (SELECT room_number
+         FROM   section
+         GROUP  BY room_number
+         HAVING Count(1) > 1)
+SELECT *
+FROM   shared_room
+       INNER JOIN section using(room_number); 
+
+-- 5) Create a view faculty showing only the ID, name, and department of instructors.
+DROP VIEW IF EXISTS view_faculty;
+
+CREATE VIEW view_faculty
+AS
+  SELECT id,
+         name,
+         dept_name
+  FROM   instructor;
