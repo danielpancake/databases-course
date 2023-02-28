@@ -1,0 +1,112 @@
+CREATE TABLE teachers
+  (
+     teacher VARCHAR(30),
+     school  VARCHAR(50),
+     room    VARCHAR(10),
+     grade   VARCHAR(15),
+     PRIMARY KEY (teacher)
+  );
+
+CREATE TABLE books
+  (
+     book_id   INT,
+     book_name VARCHAR(60),
+     publisher VARCHAR(30),
+     PRIMARY KEY (book_id)
+  );
+
+CREATE TABLE loaners
+  (
+     loaner_id INT,
+     teacher   VARCHAR(30),
+     course    VARCHAR(40),
+     PRIMARY KEY (loaner_id)
+  );
+
+CREATE TABLE loan_books
+  (
+     loaner_id INT,
+     book_id   INT,
+     loandate  DATE,
+     PRIMARY KEY (loaner_id)
+  );
+
+INSERT INTO teachers VALUES
+  ("Chad Russell", "Horizon Education Institute", "1.A01", "1st grade"),
+  ("E.F.Codd",     "Horizon Education Institute", "1.B01", "1st grade"),
+  ("Jones Smith",  "Horizon Education Institute", "1.A01", "2nd grade"),
+  ("Adam Baker",   "Bright Institution",          "2.B01", "1st grade");
+
+INSERT INTO books VALUES
+  (0, "Learning and teaching in early childhood education",  "BOA Editions"),
+  (1, "Preschool N56",                                       "Taylor & Francis Publishing"),
+  (2, "Early Childhood Education N9",                        "Prentice Hall"),
+  (3, "Know how to educate: guide for Parents and Teachers", "McGraw Hill");
+
+INSERT INTO loaners VALUES
+  (0, "Chad Russell", "Logical Thinking"),
+  (1, "Chad Russell", "Writing"),
+  (2, "Chad Russell", "Numerical Thinking"),
+  (3, "E.F.Codd",     "Spatial, Temporal and Causal Thinking"),
+  (4, "E.F.Codd",     "Numerical Thinking"),
+  (5, "Jones Smith",  "Writing"),
+  (6, "Jones Smith",  "English"),
+  (7, "Adam Baker",   "Logical Thinking"),
+  (8, "Adam Baker",   "Numerical Thinking");
+
+INSERT INTO loan_books VALUES
+  (0, 0, "2010-09-09"),
+  (1, 1, "2010-05-05"),
+  (2, 0, "2010-05-05"),
+  (3, 2, "2010-05-06"),
+  (4, 0, "2010-05-06"),
+  (5, 0, "2010-09-09"),
+  (6, 3, "2010-05-05"),
+  (7, 3, "2010-12-18"),
+  (8, 0, "2010-05-06");
+
+-- 0) Showing original table
+SELECT school,
+       teacher,
+       course,
+       room,
+       grade,
+       book_name,
+       publisher,
+       loandate
+FROM   teachers
+       JOIN loaners using(teacher)
+       JOIN loan_books using(loaner_id)
+       JOIN books using(book_id);
+
+-- 1) For each publisher find the books, which have been loaned, and in which school it has been done
+SELECT publisher,
+       book_name,
+       school
+FROM   loan_books
+       JOIN loaners using (loaner_id)
+       JOIN books using (book_id)
+       JOIN teachers using (teacher); 
+
+-- 2) For each school, find the publisher of the book and the book itself that has been on loan the smallest time
+WITH book_count_query
+     AS (SELECT school,
+                book_name,
+                Count(*) AS book_count
+         FROM   loaners
+                JOIN teachers using (teacher)
+                JOIN loan_books using (loaner_id)
+                JOIN books using (book_id)
+         GROUP  BY school,
+                   book_id),
+     min_per_school_query
+     AS (SELECT school,
+                Min(book_count) AS min_book_count
+         FROM   book_count_query
+         GROUP  BY school)
+SELECT a.school,
+       a.book_name
+FROM   book_count_query a,
+       min_per_school_query b
+WHERE  a.school = b.school
+       AND a.book_count = b.min_book_count;
