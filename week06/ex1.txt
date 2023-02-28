@@ -1,0 +1,80 @@
+CREATE TABLE IF NOT EXISTS item_ordered (
+  orderId INT, 
+  itemId INT, 
+  quantity INT, 
+  PRIMARY KEY (orderId, itemId)
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  itemId INT, 
+  itemName VARCHAR(15), 
+  price REAL, 
+  PRIMARY KEY (itemId)
+);
+
+CREATE TABLE IF NOT EXISTS customers (
+  customerId INT, 
+  customerName VARCHAR(15), 
+  city VARCHAR(15), 
+  PRIMARY KEY (customerId)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  orderId INT, 
+  customerId INT,
+  date DATE,
+  
+  PRIMARY KEY (orderId), 
+  FOREIGN KEY (customerId) REFERENCES customer(customerId)
+);
+
+INSERT INTO item_ordered VALUES
+    (2301, 3786, 3),
+    (2301, 4011, 6),
+    (2301, 9132, 8),
+    (2302, 5794, 4),
+    (2303, 4011, 2),
+    (2303, 3141, 2);
+    
+INSERT INTO items VALUES
+    (3786, "Net", 35),
+    (4011, "Racket", 65),
+    (9132, "Pack-3", 4.75),
+    (5794, "Pack-6", 5),
+    (3141, "Cover", 10);
+    
+INSERT into customers VALUES
+    (101, "Martin", "Prague"),
+    (107, "Herman", "Madrid"), 
+    (110, "Pedro", "Moscow");
+    
+INSERT into orders VALUES
+    (2301, 101, "2011-02-23"),
+    (2302, 107, "2011-02-25"),
+    (2303, 110, "2011-02-27");
+
+-- 1
+SELECT Min(total)
+FROM
+  (SELECT SUM(quantity * price) AS total
+   FROM item_ordered
+   JOIN items USING (itemId)
+   GROUP BY orderId);
+
+-- 2
+SELECT 
+  customerName, 
+  city, 
+  Max(total_quantity) 
+FROM 
+  (
+    SELECT 
+      orderId, 
+      Sum (quantity) as total_quantity 
+    FROM 
+      item_ordered 
+    GROUP BY 
+      orderId
+  ) _ 
+  JOIN orders USING (orderId) 
+  JOIN customers USING (customerId);
