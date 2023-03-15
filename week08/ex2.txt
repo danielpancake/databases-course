@@ -1,0 +1,51 @@
+-- 1) The company is preparing its campaign for next Halloween, so the list of movies that have
+--    not been rented yet by the clients is needed, whose rating is R or PG-13 and its category is
+--    Horror or Sci-fi.
+SELECT f.film_id,
+       f.title
+FROM   film f
+           LEFT JOIN inventory i
+                     ON f.film_id = i.film_id
+           LEFT JOIN rental r
+                     ON i.inventory_id = r.inventory_id
+           JOIN film_category fc
+                ON f.film_id = fc.film_id
+WHERE  r.rental_id IS NULL
+  AND f.rating IN ( 'R', 'PG-13' )
+  AND fc.category_id IN (SELECT category_id
+                         FROM   category
+                         WHERE  name IN ( 'Horror', 'Sci-Fi' ));
+
+-- 2) The company has decided to reward the best stores in each of the cities, so it is necessary
+--    to have a list of the stores that have made a greater number of sales in term of money
+--    during the last month recorded.
+DROP VIEW IF EXISTS store_revenue;
+
+CREATE VIEW store_revenue AS
+SELECT store_id, revenue
+FROM   (WITH store_payment
+                 AS (SELECT *
+                     FROM   staff JOIN payment using (staff_id))
+        SELECT store_id, Sum(amount) AS revenue
+        FROM   store_payment
+        WHERE  payment_date BETWEEN
+            (SELECT Max(payment_date) - interval '1 month'
+             FROM   payment)
+            AND
+            (SELECT Max(payment_date)
+             FROM   payment)
+        GROUP  BY store_id) _;
+
+WITH stores_with_addresses
+         AS (SELECT store_id, country, city, revenue
+             FROM   store_revenue
+                        JOIN store using (store_id)
+                        JOIN address using (address_id)
+                        JOIN city using (city_id)
+                        JOIN country using (country_id))
+SELECT *
+FROM   stores_with_addresses
+WHERE  ( country, city, revenue ) IN (SELECT country, city, Max(revenue) AS revenue
+                                      FROM   stores_with_addresses
+                                      GROUP  BY country, city)
+ORDER BY revenue DESC;
