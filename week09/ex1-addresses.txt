@@ -1,0 +1,20 @@
+Result of the execution of `SELECT * FROM get_addresses_special()`
+is presented in the table below.
++---------+----------------------------+----------+----------+
+| ADDR_ID |           ADDRESS          | ADDRESS2 |  ZIPCODE |
++---------+----------------------------+----------+----------+
+| 4       | 1411 Lillydale Drive       | null     | ""       |
+| 6       | 1121 Loja Avenue           | ""       | 17886    |
+| 507     | 1197 Sokoto Boulevard      | ""       | 87687    |
+| 528     | 1176 Southend-on-Sea Manor | ""       | 81651    |
+| 602     | 1101 Bucuresti Boulevard   | ""       | 97661    |
+| 603     | 1103 Quilmes Boulevard     | ""       | 52137    |
+| 127     | 117 Boa Vista Way          | ""       | 6804     |
+| 245     | 1103 Bilbays Parkway       | ""       | 87660    |
+| 297     | 1192 Tongliao Street       | ""       | 19065    |
+| 324     | 1145 Vilnius Manor         | ""       | 73170    |
+| 366     | 114 Jalib al-Shuyukh Manor | ""       | 60440    |
+| 378     | 1191 Tandil Drive          | ""       | 6362     |
+| 379     | 1133 Rizhao Avenue         | ""       | 2800     |
+| 511     | 1152 al-Qatif Lane         | ""       | 44816    |
++---------+----------------------------+----------+----------+

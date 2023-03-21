@@ -1,0 +1,24 @@
+-- IN [1]:
+SELECT * FROM retrieve_customers(10, 11);
+
+-- OUT[1]:
+-- +-------------+----------+------------+-----------+--------------------------------+------------+------------+-------------+----------------------------+--------+
+-- | CUSTOMER_ID | STORE_ID | FIRST_NAME | LAST_NAME |             EMAIL              | ADDRESS_ID | ACTIVEBOOL | CREATE_DATE |        LAST_UPDATE         | ACTIVE |
+-- +-------------+----------+------------+-----------+--------------------------------+------------+------------+-------------+----------------------------+--------+
+-- | 10          | 1        | Dorothy    | Taylor    | dorothy.taylor@sakilacustomer. | 14         | true       | 2006-02-14  | 2013-05-26 14:49:45.738000 | 1      |
+-- |             |          |            |           | org                            |            |            |             |                            |        |
+-- | 11          | 2        | Lisa       | Anderson  | lisa.anderson@sakilacustomer.o | 15         | true       | 2006-02-14  | 2013-05-26 14:49:45.738000 | 1      |
+-- |             |          |            |           | rg                             |            |            |             |                            |        |
+-- +-------------+----------+------------+-----------+--------------------------------+------------+------------+-------------+----------------------------+--------+
+
+-- IN [2]:
+SELECT * FROM retrieve_customers(50, 30);
+
+-- OUT[2]:
+-- [P0001] ERROR: Invalid start and end parameters, start (50) should be not greater than end (30)
+
+-- IN [3]:
+SELECT * FROM retrieve_customers(-1, 601);
+
+-- OUT[3]:
+-- [P0001] ERROR: Invalid start and end parameters, out of bounds of [0, 600]: -1, 601
