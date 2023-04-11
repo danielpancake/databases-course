@@ -1,0 +1,12 @@
+1. Return all middle/welter/light weight fighters (155, 170, 185) who at least have one win and grouped by weight.
+MATCH (f:Fighter)-[b:beats]->(f2:Fighter)
+WHERE f.weight = 155 OR f.weight = 170 OR f.weight = 185
+RETURN f.weight, collect(f)
+
+2. Return fighters who had 1-1 record with each other. Use Count from the aggregation functions.
+MATCH (f:Fighter)-[b:beats]->(f2:Fighter) - [b2:beats] -> (f3:Fighter)
+WHERE f.name = f3.name
+RETURN f.name, collect(f)
+
+
+
